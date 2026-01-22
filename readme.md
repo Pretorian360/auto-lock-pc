@@ -141,5 +141,6 @@ Para que o programa inicie sozinho sempre que você ligar o PC (sem janelas aber
 
 ---
 <p align="center">Feito com ❤️ para uma mesa de trabalho mais segura.</p>
-  <sub>Projeto mantido por <b>Pedro Augusto Da Costa</b></sub>
+  <sub>Projeto desenvolvido por <b>Pedro Augusto Da Costa</b></sub>
+  <sub>Linkedin: https://www.linkedin.com/in/pedro-augusto-da-costa-02347831a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app</sub>
 </div>
