@@ -25,16 +25,16 @@ Crie um ambiente virtual e instale as dependências:
 py -m venv win_lock_env
 .\win_lock_env\Scripts\activate
 pip install -r requirements.txt
-
+```
 ### 2. Configuração (Recomendado: Via UUID)
 
 Devido à privacidade do Bluetooth (MAC Randomization), recomenda-se usar o UUID de Serviço:
-Importante: Crie a o arquivo config/settings.json como no exemplo abaixo:
+Importante: Crie o arquivo `config/settings.json` como no exemplo abaixo:
 
-1. Aproxime o celular do PC. Nem sempre o nome do dispositivo aparece, por isso a importancia de colocado o mais próximo do PC.
+1. Aproxime o celular do PC. Nem sempre o nome do dispositivo aparece, por isso a importância de mantê-lo o mais próximo do PC.
 2. Rode `python scripts/scan_details.py`.
 3. Copie o UUID encontrado (ex: `00005246...`) no `config/settings.json`.
-4. Quanto mais positivo o RSSI exemplo (-67 > -40) mais próximo está seu dispositivo.
+4. Quanto mais positivo o RSSI (exemplo: -40 é maior que -67), mais próximo está seu dispositivo.
 
 ```json
 {
