@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+win_lock_env/
+venv/
+env/
+
+# IDEs
+.vscode/
+.idea/
+
+# Config (Optional: keep example but ignore real config if sensitive)
+# config/settings.json
+
+# Logs
+*.log
