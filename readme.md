@@ -40,12 +40,6 @@ Importante: Crie o arquivo `config/settings.json` como no exemplo abaixo:
     "rssi_threshold": -85
 }
 ```
-
-1. Aproxime o celular do PC. Nem sempre o nome do dispositivo aparece, por isso a importância de mantê-lo o mais próximo do PC.
-2. Rode `python scripts/scan_details.py`.
-3. Copie o UUID encontrado (ex: `00005246...`) no `config/settings.json`.
-4. Quanto mais positivo o RSSI (exemplo: -40 é maior que -67), mais próximo está seu dispositivo.
-
 | Parâmetro | Descrição |
 | :--- | :--- |
 | `phone_mac` | Endereço MAC do dispositivo. (Opcional se usar UUID, pois muitos celulares mudam o MAC aleatoriamente). |
@@ -53,6 +47,11 @@ Importante: Crie o arquivo `config/settings.json` como no exemplo abaixo:
 | `scan_interval` | Intervalo em segundos entre cada varredura Bluetooth. |
 | `max_misses` | Número de falhas consecutivas permitidas antes de bloquear o PC (tolerância contra falhas momentâneas). |
 | `rssi_threshold` | Limite de sinal (em dBm). Se o sinal for menor que isso (ex: -95), considera-se que você está longe. Valores mais próximos de 0 indicam maior proximidade. |
+
+1. Aproxime o celular do PC. Nem sempre o nome do dispositivo aparece, por isso a importância de mantê-lo o mais próximo do PC.
+2. Rode `python scripts/scan_details.py`.
+3. Copie o UUID encontrado (ex: `00005246...`) no `config/settings.json`.
+4. Quanto mais positivo o RSSI (exemplo: -40 é maior que -67), mais próximo está seu dispositivo.
 
 ### 3. Execução
 
