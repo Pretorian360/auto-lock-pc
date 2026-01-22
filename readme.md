@@ -1,35 +1,90 @@
-# Proximity Lock PC
+# 🔐 Proximity Lock PC
 
-Este projeto bloqueia automaticamente o seu PC Windows quando o seu dispositivo Bluetooth (celular) se afasta, e mantém a tela ativa quando você está por perto.
-Pode ser usado com outros dispositivos Bluetooth, como pulseiras inteligentes, smartwatches, etc.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python Version">
+  <img src="https://img.shields.io/badge/Windows-Supported-success?style=for-the-badge&logo=windows" alt="Platform">
+  <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License">
+</p>
 
-## 📋 Estrutura do Projeto
+O **Proximity Lock PC** é uma solução leve e eficiente para aumentar a segurança do seu computador. Ele bloqueia automaticamente o Windows quando você se afasta e ativa a tela assim que você retorna, utilizando a intensidade de sinal (RSSI) de dispositivos Bluetooth próximos.
 
-- `config/settings.json`: Configurações de MAC, RSSI e intervalos.
-- `scripts/scan_details.py`: Utilitário para descobrir UUIDs de serviços (mais estável que MAC).
-- `scripts/install_startup.ps1`: Script para configurar inicialização automática com o Windows.
-- `src/`: Código fonte principal.
-  - `bluetooth/`: Lógica de scanner BLE.
-  - `system/`: Interações com o Windows (Lock, Wake + Space).
-  - `system/tray.py`: Ícone de bandeja do sistema.
-  - `core/`: Lógica de monitoramento.
-  - `main.py`: Ponto de entrada com suporte a Tray e Multithreading.
+---
 
-## 🚀 Como Usar
+## ✨ Funcionalidades
 
-### 1. Instalação
+*   **🔒 Bloqueio Automático:** Tranca o PC instantaneamente ao detectar que seu dispositivo Bluetooth está fora de alcance ou com sinal muito fraco.
+*   **🔆 Wake-on-Proximity:** Ativa a tela automaticamente assim que você se aproxima (economizando tempo).
+*   **🔹 Ícone na Bandeja:** Interface discreta na bandeja do sistema para monitoramento em tempo real.
+*   **⚙️ Altamente Configurável:** Ajuste a sensibilidade e os intervalos conforme sua necessidade.
 
-Crie um ambiente virtual e instale as dependências:
+> [!IMPORTANT]
+> **Segurança em primeiro lugar:** Este projeto **não armazena senhas** e **não realiza login automático**. Ele apenas solicita que o Windows bloqueie a sessão e desperte a tela. Você ainda precisará digitar sua senha/PIN manualmente.
+
+---
+
+## 🛠️ Como Funciona o Fluxo
+
+```mermaid
+graph TD
+    A[Dispositivo Bluetooth] -- BLE Signal --> B[Scanner de Proximidade]
+    B -- Analisa RSSI --> C{Está perto?}
+    C -- Não --> D[Bloqueia Windows]
+    C -- Sim --> E[Acorda Tela]
+```
+
+---
+
+## 📁 Estrutura do Projeto
+
+```text
+proximity-lock-pc/
+├── config/           # Configurações do usuário
+│   └── settings.json
+├── scripts/          # Ferramentas auxiliares
+│   ├── scan_details.py
+│   └── install_startup.ps1
+├── src/              # Código fonte
+│   ├── bluetooth/    # Scanner BLE
+│   ├── core/         # Lógica de monitoramento
+│   ├── system/       # Integração com Windows OS
+│   └── main.py       # Ponto de entrada
+├── requirements.txt  # Dependências
+└── README.md
+```
+
+---
+
+## 🚀 Guia de Instalação
+
+### 1. Preparar Ambiente
+Certifique-se de ter o Python 3.10 ou superior instalado.
 
 ```bash
-py -m venv win_lock_env
-.\win_lock_env\Scripts\activate
+# Clone o repositório ou baixe os arquivos
+# Crie o ambiente virtual
+py -m venv venv
+
+# Ative o ambiente
+.\venv\Scripts\activate
+
+# Instale as dependências
 pip install -r requirements.txt
 ```
-### 2. Configuração (Recomendado: Via UUID)
 
-Devido à privacidade do Bluetooth (MAC Randomization), recomenda-se usar o UUID de Serviço:
-Importante: Crie o arquivo `config/settings.json` como no exemplo abaixo:
+### 2. Localizar seu Dispositivo
+Mantenha o dispositivo que você deseja usar (celular, relógio) bem próximo ao computador e execute:
+
+```bash
+python scripts/scan_details.py
+```
+
+**Copie o `service_uuid`** (recomendado) ou o endereço MAC que aparecer no log para o seu dispositivo.
+
+---
+
+## ⚙️ Configuração
+
+Crie ou edite o arquivo `config/settings.json`:
 
 ```json
 {
@@ -40,55 +95,49 @@ Importante: Crie o arquivo `config/settings.json` como no exemplo abaixo:
     "rssi_threshold": -85
 }
 ```
-| Parâmetro | Descrição |
-| :--- | :--- |
-| `phone_mac` | Endereço MAC do dispositivo. (Opcional se usar UUID, pois muitos celulares mudam o MAC aleatoriamente). |
-| `service_uuid` | Identificador único do serviço BLE. Recomendado para Android/iOS modernos. |
-| `scan_interval` | Intervalo em segundos entre cada varredura Bluetooth. |
-| `max_misses` | Número de falhas consecutivas permitidas antes de bloquear o PC (tolerância contra falhas momentâneas). |
-| `rssi_threshold` | Limite de sinal (em dBm). Se o sinal for menor que isso (ex: -95), considera-se que você está longe. Valores mais próximos de 0 indicam maior proximidade. |
 
-1. Aproxime o celular do PC. Nem sempre o nome do dispositivo aparece, por isso a importância de mantê-lo o mais próximo do PC.
-2. Rode `python scripts/scan_details.py`.
-3. Copie o UUID encontrado (ex: `00005246...`) no `config/settings.json`.
-4. Quanto mais positivo o RSSI (exemplo: -40 é maior que -67), mais próximo está seu dispositivo.
+### Parâmetros de Ajuste
 
-### 3. Execução
+| Parâmetro | Descrição | Sugestão |
+| :--- | :--- | :--- |
+| `service_uuid` | UUID do serviço BLE do seu dispositivo. | **Recomendado** para Android/iOS. |
+| `phone_mac` | Endereço MAC (use se o UUID não estiver disponível). | Deixe `""` se usar UUID. |
+| `scan_interval` | Segundos entre cada verificação de sinal. | `5` (Equilíbrio bateria/segurança) |
+| `max_misses` | Tolerância de falhas antes de bloquear. | `2` ou `3` (Evita bloqueios falsos) |
+| `rssi_threshold`| Limite de sinal (dBm). | `-80` (muito perto) a `-95` (longe) |
 
-**Modo Manual:**
+> **Dica:** O RSSI é um valor negativo. Quanto mais próximo de **0**, mais forte o sinal. Se o PC bloquear enquanto você ainda está sentado, diminua o valor (ex: mude de -80 para -90).
+
+---
+
+## 💻 Uso e Execução
+
+### Modo Manual
+Para testar e ver os logs em tempo real:
 ```bash
 python src/main.py
 ```
 
-**Modo Background (System Tray):**
-O ícone aparecerá na bandeja do sistema (Icone azul).
-
-### 4. Inicialização Automática
-
-Para que o programa inicie junto com o Windows (silenciosamente):
-
+### Inicialização Automática
+Para que o programa inicie sozinho sempre que você ligar o PC (sem janelas abertas):
+1. Abra o PowerShell como Administrador.
+2. Execute o script de instalação:
 ```powershell
 .\scripts\install_startup.ps1
 ```
 
-## 🛠️ Tecnologias
+---
 
-- **Python 3.10+**
-- **Bleak**: Scanner Bluetooth Low Energy.
-- **Pystray**: Ícone de bandeja do sistema.
-- **PyWin32 / Ctypes**: Interação nativa (LockWorkStation, SendInput).
+## ⚠️ Limitações
+*   **RSSI Inconstante:** Paredes, móveis e até o seu corpo podem interferir no sinal Bluetooth.
+*   **Deep Sleep:** Alguns sistemas Windows desativam o Bluetooth em modo de economia de energia agressivo, o que pode impedir o despertar da tela.
 
-## ⚠️ Limitações Conhecidas
+---
 
-- A precisão do RSSI pode variar conforme o ambiente.
-- Interferências Bluetooth podem causar falsos positivos raros.
-- Não funciona durante hibernação/sleep profundo.
+## 🛡️ Tecnologias Utilizadas
+*   [Bleak](https://github.com/hbldh/bleak) - Scanner Bluetooth Low Energy.
+*   [Pystray](https://github.com/moses-palmer/pystray) - Ícone de bandeja do sistema.
+*   [PyWin32](https://github.com/mhammond/pywin32) - APIs nativas do Windows.
 
-Diagrama simples do funcionamento:
-[ Smartphone ]
-      ↓ BLE
-[ Scanner ]
-      ↓
-[ Monitor ]
-      ↓
-[ Windows Lock / Wake ]
+---
+<p align="center">Feito com ❤️ para uma mesa de trabalho mais segura.</p>
