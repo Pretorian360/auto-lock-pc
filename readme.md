@@ -31,11 +31,6 @@ pip install -r requirements.txt
 Devido à privacidade do Bluetooth (MAC Randomization), recomenda-se usar o UUID de Serviço:
 Importante: Crie o arquivo `config/settings.json` como no exemplo abaixo:
 
-1. Aproxime o celular do PC. Nem sempre o nome do dispositivo aparece, por isso a importância de mantê-lo o mais próximo do PC.
-2. Rode `python scripts/scan_details.py`.
-3. Copie o UUID encontrado (ex: `00005246...`) no `config/settings.json`.
-4. Quanto mais positivo o RSSI (exemplo: -40 é maior que -67), mais próximo está seu dispositivo.
-
 ```json
 {
     "phone_mac": "",
@@ -45,6 +40,11 @@ Importante: Crie o arquivo `config/settings.json` como no exemplo abaixo:
     "rssi_threshold": -85
 }
 ```
+
+1. Aproxime o celular do PC. Nem sempre o nome do dispositivo aparece, por isso a importância de mantê-lo o mais próximo do PC.
+2. Rode `python scripts/scan_details.py`.
+3. Copie o UUID encontrado (ex: `00005246...`) no `config/settings.json`.
+4. Quanto mais positivo o RSSI (exemplo: -40 é maior que -67), mais próximo está seu dispositivo.
 
 | Parâmetro | Descrição |
 | :--- | :--- |
