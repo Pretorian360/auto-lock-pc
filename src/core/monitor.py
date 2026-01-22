@@ -26,8 +26,8 @@ class ProximityMonitor:
         # Carrega configs
         self.mac = config.get("phone_mac")
         self.service_uuid = config.get("service_uuid") # Novo campo opcional
-        self.threshold = config.get("rssi_threshold", -85)
-        self.max_misses = config.get("max_misses", 3)
+        self.threshold = config.get("rssi_threshold", -80)
+        self.max_misses = config.get("max_misses", 2)
 
     async def run_check(self):
         """Executa uma verificação de ciclo único."""

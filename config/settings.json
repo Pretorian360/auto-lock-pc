@@ -3,5 +3,5 @@
     "service_uuid": "00005246-0000-1000-8000-00805f9b34fb",
     "scan_interval": 5,
     "max_misses": 2,
-    "rssi_threshold": -90
+    "rssi_threshold": -80
 }
