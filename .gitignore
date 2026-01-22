@@ -12,8 +12,7 @@ env/
 .vscode/
 .idea/
 
-# Config (Optional: keep example but ignore real config if sensitive)
-# config/settings.json
+config/settings.json
 
 # Logs
 *.log
