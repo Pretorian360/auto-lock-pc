@@ -4,33 +4,34 @@ import logging
 logger = logging.getLogger(__name__)
 
 def lock_workstation():
-    """Bloqueia a estação de trabalho Windows."""
-    logger.info("Bloqueando a estação de trabalho...")
+    """
+    Locks the Windows workstation.
+    Equivalent to pressing Win+L.
+    """
+    logger.info("Locking workstation...")
     try:
         ctypes.windll.user32.LockWorkStation()
         return True
     except Exception as e:
-        logger.error(f"Falha ao bloquear: {e}")
+        logger.error(f"Failed to lock: {e}")
         return False
 
 def wake_screen():
     """
-    Simula uma pequena atividade para acordar a tela ou impedir hibernação.
-    Envia um input de 'mouse move' imperceptível.
+    Simulates minimal user activity to wake the screen or prevent sleep.
+    Sends an imperceptible mouse move followed by a key press/release.
     """
-    logger.debug("Enviando sinal de wake/keep-awake...")
+    logger.debug("Sending wake/keep-awake signal...")
     try:
-        # 1. Acorda o monitor (Mouse move imperceptível)
+        # 1. Wake monitor (Imperceptible mouse move)
         ctypes.windll.user32.mouse_event(0x0001, 1, 0, 0, 0)
         
-        # 2. Mostra o campo de senha (Pressiona ESPAÇO)
+        # 2. Show password field (Press/Release SPACE)
         # 0x20 = VK_SPACE
-        # 0 = Press
-        # 2 = Release
         ctypes.windll.user32.keybd_event(0x20, 0, 0, 0) # Press Space
         ctypes.windll.user32.keybd_event(0x20, 0, 2, 0) # Release Space
         
         return True
     except Exception as e:
-        logger.error(f"Falha ao acordar tela: {e}")
+        logger.error(f"Failed to wake screen: {e}")
         return False

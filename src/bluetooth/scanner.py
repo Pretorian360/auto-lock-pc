@@ -6,41 +6,43 @@ logger = logging.getLogger(__name__)
 
 async def is_device_near(mac_address: str, rssi_threshold: int, service_uuid: str = None) -> bool:
     """
-    Verifica se o dispositivo está próximo.
-    - Se mac_address for fixo, verifica MAC.
-    - Se service_uuid for fornecido, verifica se algum device anuncia esse serviço.
+    Checks if the target device is near based on RSSI threshold.
+    
+    :param mac_address: Target MAC address to check.
+    :param rssi_threshold: Minimum RSSI value to consider "near".
+    :param service_uuid: Optional Service UUID to check for (useful for modern Android/iOS).
+    :return: True if device is found and signal >= threshold, else False.
     """
     try:
-        # Nota: scan de 3 segundos é um bom equilíbrio
-        # Required return_adv=True for Bleak 2.0+
+        # Scan for 3 seconds to gather advertisements
         devices = await BleakScanner.discover(timeout=3.0, return_adv=True)
         
         for d, adv in devices.values():
             found = False
             
-            # Checagem por MAC (se não for randomizado ou se coincidir na sorte)
+            # Check by MAC address
             if mac_address and d.address.upper() == mac_address.upper():
                 found = True
             
-            # Checagem por UUID de Serviço (Mais robusto para Android/iOS modernos)
+            # Check by Service UUID (More robust for randomized MACs)
             if not found and service_uuid:
-                if service_uuid.lower() in [u.lower() for u in adv.service_uuids]:
+                # adv.service_uuids uses standard normalization, but safe to lower() just in case
+                advertised_uuids = [u.lower() for u in adv.service_uuids]
+                if service_uuid.lower() in advertised_uuids:
                     found = True
-                    # Atualiza o MAC alvo para logs futuros se necessário? 
-                    # Por enquanto apenas detectamos a presença.
             
             if found:
-                logger.debug(f"Dispositivo encontrado: {d.address}, RSSI: {adv.rssi}")
+                logger.debug(f"Device found: {d.address}, RSSI: {adv.rssi}")
                 
                 if adv.rssi >= rssi_threshold:
                     return True
                 else:
-                    logger.debug(f"Sinal fraco: {adv.rssi} < {rssi_threshold}")
+                    logger.debug(f"Signal weak: {adv.rssi} < {rssi_threshold}")
                     return False
         
-        logger.debug(f"Nenhum dispositivo correspondente encontrado no scan.")
+        logger.debug("No matching device found in scan.")
         return False
         
     except Exception as e:
-        logger.error(f"Erro ao escanear: {e}")
+        logger.error(f"Error checking device proximity: {e}")
         return False

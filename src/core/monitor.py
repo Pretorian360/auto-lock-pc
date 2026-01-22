@@ -1,19 +1,22 @@
 import logging
 import time
 
-# Imports relativos podem ser complexos dependendo de como main é executado.
-# Assumindo execução como módulo ou ajustando sys.path.
-# Interfaces injetadas evitam acoplamento forte aqui.
-
 logger = logging.getLogger(__name__)
 
 class ProximityMonitor:
+    """
+    Manages the logic for locking/unlocking based on proximity.
+    Orchestrates the scanner and system actions (lock/wake).
+    """
+
     def __init__(self, scanner_func, locker_func, waker_func, config):
         """
-        :param scanner_func: async function(mac, rssi_limit) -> bool
-        :param locker_func: function() -> void
-        :param waker_func: function() -> void
-        :param config: dict with keys 'phone_mac', 'rssi_threshold', 'max_misses'
+        Initialize the monitor with dependencies and configuration.
+
+        :param scanner_func: Async function to detect device presence.
+        :param locker_func: Function to lock the workstation.
+        :param waker_func: Function to wake the screen.
+        :param config: Dictionary containing 'phone_mac', 'rssi_threshold', etc.
         """
         self.scanner = scanner_func
         self.locker = locker_func
@@ -23,34 +26,39 @@ class ProximityMonitor:
         self.missed_scans = 0
         self.is_locked = False
         
-        # Carrega configs
+        # Load configuration values
         self.mac = config.get("phone_mac")
-        self.service_uuid = config.get("service_uuid") # Novo campo opcional
+        self.service_uuid = config.get("service_uuid")
         self.threshold = config.get("rssi_threshold", -80)
         self.max_misses = config.get("max_misses", 2)
 
     async def run_check(self):
-        """Executa uma verificação de ciclo único."""
-        # Se não tiver nem MAC nem UUID configurado, avisa
+        """
+        Executes a single check cycle.
+        Scans for the device and locks/unlocks the PC based on presence and state.
+        """
+        # Validate configuration
         if (not self.mac or self.mac == "AA:BB:CC:DD:EE:FF") and not self.service_uuid:
-            logger.warning("Nenhum Alvo configurado (MAC ou UUID). Verifique settings.json")
+            logger.warning("No target configured (MAC or UUID). Check settings.json")
             return
 
+        # Perform scan
         is_near = await self.scanner(self.mac, self.threshold, self.service_uuid)
 
         if is_near:
             self.missed_scans = 0
             if self.is_locked:
-                logger.info("Dispositivo detectado. Desbloqueando (lógica de wake)...")
+                logger.info("Device detected. Unlocking/Waking...")
                 self.waker()
                 self.is_locked = False
             else:
-                logger.debug("Dispositivo próximo. Mantendo desbloqueado.")
+                logger.debug("Device near. Keeping unlocked.")
         else:
             self.missed_scans += 1
-            logger.info(f"Dispositivo longe/ausente. Tentativa {self.missed_scans}/{self.max_misses}")
+            logger.info(f"Device absent. Attempt {self.missed_scans}/{self.max_misses}")
 
+            # Lock if max misses reached and not already locked
             if self.missed_scans >= self.max_misses and not self.is_locked:
-                logger.info("Limite de ausência atingido. Bloqueando PC.")
+                logger.info("Absence limit reached. Locking PC.")
                 self.locker()
                 self.is_locked = True

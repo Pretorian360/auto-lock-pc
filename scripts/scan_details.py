@@ -2,32 +2,36 @@ import asyncio
 from bleak import BleakScanner
 
 async def scan_details():
-    print("Iniciando escaneamento")
-    print("Aproxime o celular do PC agora")
-    print("Aguardando 5 segundos...\n")
+    """
+    Scans for BLE devices and prints detailed information for the top 3 strongest signals.
+    Useful for debugging and finding Service UUIDs.
+    """
+    print("Starting Detailed Scan...")
+    print("Bring your device close to the PC.")
+    print("Scanning for 5 seconds...\n")
 
-    # return_adv=True traz os dados de propaganda (AdvertisementData)
+    # return_adv=True retrieves AdvertisementData
     devices = await BleakScanner.discover(timeout=5.0, return_adv=True)
 
-    # Ordena por sinal (mais forte primeiro)
+    # Sort by signal strength (strongest first)
     sorted_devices = sorted(devices.values(), key=lambda x: x[1].rssi, reverse=True)
 
     count = 0
     for d, adv in sorted_devices:
-        # Exibe apenas os top 3 mais fortes para não poluir
+        # Show only top 3 to avoid clutter
         if count >= 3:
             break
         
-        print(f"📍 DISPOSITIVO: {d.address}")
-        print(f"Nome: {d.name or adv.local_name or 'Desconhecido'}")
+        print(f"📍 DEVICE: {d.address}")
+        print(f"Name: {d.name or adv.local_name or 'Unknown'}")
         print(f"RSSI: {adv.rssi}")
-        print(f"Serviços (UUIDs): {adv.service_uuids}")
+        print(f"Services (UUIDs): {adv.service_uuids}")
         print(f"Manufacturer Data: {adv.manufacturer_data}")
         print("-" * 40)
         count += 1
 
     if count == 0:
-        print("Nenhum dispositivo encontrado.")
+        print("No devices found.")
 
 if __name__ == "__main__":
     asyncio.run(scan_details())
