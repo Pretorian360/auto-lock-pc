@@ -68,3 +68,18 @@ Para que o programa inicie junto com o Windows (silenciosamente):
 - **Bleak**: Scanner Bluetooth Low Energy.
 - **Pystray**: Ícone de bandeja do sistema.
 - **PyWin32 / Ctypes**: Interação nativa (LockWorkStation, SendInput).
+
+## ⚠️ Limitações Conhecidas
+
+- A precisão do RSSI pode variar conforme o ambiente.
+- Interferências Bluetooth podem causar falsos positivos raros.
+- Não funciona durante hibernação/sleep profundo.
+
+Diagrama simples do funcionamento:
+[ Smartphone ]
+      ↓ BLE
+[ Scanner ]
+      ↓
+[ Monitor ]
+      ↓
+[ Windows Lock / Wake ]
