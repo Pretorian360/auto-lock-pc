@@ -141,5 +141,5 @@ Para que o programa inicie sozinho sempre que você ligar o PC (sem janelas aber
 
 ---
 <p align="center">Feito com ❤️ para uma mesa de trabalho mais segura.</p>
-  <sub>Projeto mantido por <b>Pedro Augusto</b></sub>
+  <sub>Projeto mantido por <b>Pedro Augusto Da Costa</b></sub>
 </div>
