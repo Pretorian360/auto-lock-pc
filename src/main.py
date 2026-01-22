@@ -45,7 +45,7 @@ def load_config():
         return None
 
 async def monitor_task(monitor, interval):
-    logger.info("Monitoramento iniciado (Background).")
+    logger.info("Monitoramento iniciado")
     try:
         while not STOP_EVENT.is_set():
             await monitor.run_check()

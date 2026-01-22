@@ -2,8 +2,8 @@ import asyncio
 from bleak import BleakScanner
 
 async def scan_details():
-    print("Iniciando escaneamento DETALHADO...")
-    print("Aproxime o celular do PC agora (RSSI > -50).")
+    print("Iniciando escaneamento")
+    print("Aproxime o celular do PC agora")
     print("Aguardando 5 segundos...\n")
 
     # return_adv=True traz os dados de propaganda (AdvertisementData)

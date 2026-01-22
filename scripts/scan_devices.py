@@ -2,7 +2,8 @@ import asyncio
 from bleak import BleakScanner
 
 async def scan():
-    print("Iniciando escaneamento de dispositivos Bluetooth LE...")
+    print("Iniciando escaneamento de dispositivos Bluetooth")
+    print("Aproxime o celular do PC agora")
     print("Aguarde 5 segundos...")
     
     # return_adv=True is required in Bleak 2.0+ to get RSSI
