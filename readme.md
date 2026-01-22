@@ -1,6 +1,7 @@
 # Proximity Lock PC
 
 Este projeto bloqueia automaticamente o seu PC Windows quando o seu dispositivo Bluetooth (celular) se afasta, e mantém a tela ativa quando você está por perto.
+Pode ser usado com outros dispositivos Bluetooth, como pulseiras inteligentes, smartwatches, etc.
 
 ## 📋 Estrutura do Projeto
 
@@ -30,9 +31,10 @@ pip install -r requirements.txt
 
 Devido à privacidade do Bluetooth (MAC Randomization), recomenda-se usar o UUID de Serviço:
 
-1. Aproxime o celular do PC.
+1. Aproxime o celular do PC. Nem sempre o nome do dispositivo aparece, por isso a importancia de colocado o mais próximo do PC.
 2. Rode `python scripts/scan_details.py`.
 3. Copie o UUID encontrado (ex: `00005246...`) no `config/settings.json`.
+4. Quanto mais positivo o RSSI exemplo (-67 > -40) mais próximo está seu dispositivo.
 
 ```json
 {
@@ -44,6 +46,14 @@ Devido à privacidade do Bluetooth (MAC Randomization), recomenda-se usar o UUID
 }
 ```
 
+| Parâmetro | Descrição |
+| :--- | :--- |
+| `phone_mac` | Endereço MAC do dispositivo. (Opcional se usar UUID, pois muitos celulares mudam o MAC aleatoriamente). |
+| `service_uuid` | Identificador único do serviço BLE. Recomendado para Android/iOS modernos. |
+| `scan_interval` | Intervalo em segundos entre cada varredura Bluetooth. |
+| `max_misses` | Número de falhas consecutivas permitidas antes de bloquear o PC (tolerância contra falhas momentâneas). |
+| `rssi_threshold` | Limite de sinal (em dBm). Se o sinal for menor que isso (ex: -95), considera-se que você está longe. Valores mais próximos de 0 indicam maior proximidade. |
+
 ### 3. Execução
 
 **Modo Manual:**
@@ -52,7 +62,7 @@ python src/main.py
 ```
 
 **Modo Background (System Tray):**
-O ícone aparecerá na bandeja do sistema (perto do relógio).
+O ícone aparecerá na bandeja do sistema (Icone azul).
 
 ### 4. Inicialização Automática
 
