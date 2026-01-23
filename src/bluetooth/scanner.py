@@ -14,8 +14,7 @@ async def is_device_near(mac_address: str, rssi_threshold: int, service_uuid: st
     :return: True if device is found and signal >= threshold, else False.
     """
     try:
-        # Scan for 3 seconds to gather advertisements
-        devices = await BleakScanner.discover(timeout=3.0, return_adv=True)
+        devices = await BleakScanner.discover(timeout=2.0, return_adv=True)
         
         for d, adv in devices.values():
             found = False
